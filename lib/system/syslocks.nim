@@ -83,9 +83,6 @@ else:
     SysLockAttr {.importc: "pthread_mutexattr_t", pure, final
                header: """#include <sys/types.h>
                           #include <pthread.h>""".} = object
-    SysCond {.importc: "pthread_cond_t", pure, final,
-               header: """#include <sys/types.h>
-                          #include <pthread.h>""".} = object
     SysLockType = distinct cint
 
   proc initSysLock(L: var SysLock, attr: ptr SysLockAttr = nil) {.
@@ -113,6 +110,10 @@ else:
     importc: "pthread_mutex_destroy", header: "<pthread.h>".}
 
   when not insideRLocksModule:
+    type
+      SysCond {.importc: "pthread_cond_t", pure, final,
+                 header: """#include <sys/types.h>
+                            #include <pthread.h>""".} = object
     proc initSysCond(cond: var SysCond, cond_attr: pointer = nil) {.
       importc: "pthread_cond_init", header: "<pthread.h>", noSideEffect.}
     proc waitSysCond(cond: var SysCond, lock: var SysLock) {.
